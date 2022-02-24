@@ -102,20 +102,19 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
-    // storage array
     var results = [];
-    // iterate over input array
+    var iterated = [];
     for (var i = 0; i < array.length; i++) {
-      if (iterator !== undefined) {
-        var iterated = iterator(array[i]);
-        if (results.indexOf(iterated) === -1) {
-          results.push(array[i])
-        }
-      } else {
-        var iterated = array[i]
-      } if (results.indexOf(iterated) === -1) {
-        results.push(iterated)
+     if (!iterator) {
+      if (results.indexOf(array[i]) === -1) {
+       results.push(array[i]);
       }
+     } else {
+      if (iterated.indexOf(iterator(array[i])) === -1) {
+       results.push(array[i]);
+       iterated.push(iterator(array[i]));
+      }
+     }
     }
     return results;
   };
@@ -198,13 +197,41 @@
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
-    // TIP: Try re-using reduce() here.
+    if (collection.length === 0) {
+      return true;
+    }
+    if (iterator === undefined) {
+      for (var y = 0; y < collection.length; y++) {
+        if (!collection[y]) {
+          return false;
+        }
+      }
+    } else {
+    // iterate over the collection
+    for (var x = 0; x < collection.length; x++) {
+      if (!iterator(collection[x])) {
+        return false;
+      }
+    }
+
+    }
+    return true;
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
+    // if iterator is undefined
+    if (iterator === undefined || iterator === null) {
+      iterator = _.identity;
+    }
+    return !(_.every(collection, function(item) {
+      return !(iterator(item))
+    }))
+
+    // assign iterator to collection[0]
     // TIP: There's a very clever way to re-use every() here.
+    // if not every element does not pass
   };
 
 
